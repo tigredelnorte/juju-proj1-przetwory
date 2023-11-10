@@ -9,115 +9,64 @@
 
 void wyswietlMenu(char* gwiazdki)
 {
-	printf("\e[1;1H\e[2J");
-	printf("\n**************************************************\n");
-	printf("*               Generator funkcji                *\n");
-	printf("* y = A*sin(Bx^2+C*x) + D / (x-1) * cos(E*x - F) *\n");
-	printf("**************************************************\n");
+	printf("\n*******************************************************\n");
+	printf("*                 Generator funkcji                   *\n");
+	printf("* y = A*sin(B*x^2 + C*x) + D / (x - 1) * cos(E*x - F) *\n");
+	printf("*******************************************************\n");
 
 	printf("\n                    MENU\n");
-	printf("1. Zdefiniuj współczynniki A, B, C, D, E, F          [%c]\n", gwiazdki[0]);
-	printf("2. Zdefiniuj zakres i ilość argumentów funkcji       [%c]\n", gwiazdki[1]);
-	printf("3. Generuj wartości funkcji                          [%c]\n", gwiazdki[2]);
-	printf("4. Zdefiniuj i wygeneruj zaszumione wartości funkcji [%c]\n", gwiazdki[3]);
-	printf("5. Odczytaj wartości funkcji z pliku\n");
-	printf("6. Zapisz wartości funkcji do pliku\n");
-	printf("7. Odczytaj wartości funkcji z pliku\n");
-	printf("8. Wyjście\n");
-	printf("Wybierz opcję (1-8): ");
+	printf("1. Zdefiniuj wspolczynniki A, B, C, D, E, F          [%c]\n", gwiazdki[0]);
+	printf("2. Zdefiniuj zakres i ilosc argumentow funkcji       [%c]\n", gwiazdki[1]);
+	printf("3. Generuj wartosci funkcji                          [%c]\n", gwiazdki[2]);
+	printf("4. Zdefiniuj i wygeneruj zaszumione wartosci funkcji [%c]\n", gwiazdki[3]);
+	printf("5. Zapisz wartosci funkcji do pliku\n");
+	printf("5. Zapisz wartosci szumu funkcji do pliku\n");
+	printf("7. Odczytaj wartosci funkcji z pliku\n");
+	printf("8. Odczytaj wartosci funkcji z pliku\n");
+	printf("9. Odczytaj wartosci funkcji z pliku\n");
+	printf("0. Wyjscie\n");
+	printf("Wybierz opcje (0-9): ");
 }
-void tabWspolczynnikow(double **wspolczynniki)
+void tabWspolczynnikow(double** wspolczynniki)
 {
-	Sleep(1000);
-	printf("Witaj Użytkowniku.\n");
-	Sleep(1000);
-	printf("Dla funkcji:\n");
-	Sleep(1000);
-	printf("A*sin(Bx^2+C*x) + D / (x-1) * cos(E*x - F)\n");
-	Sleep(1000);
-	printf("Podaj w kolejnosci wartości wspolczynnikow A, B, C, D, E, F:\n");
+	printf("Podaj w kolejnosci wartosci wspolczynnikow A, B, C, D, E, F:\n");
 	Sleep(1000);
 
 	*wspolczynniki = (double*)malloc(sizeof(double));
 	if (*wspolczynniki == NULL) {
-		printf("Błąd alokacji pamięci.\n");
+		printf("Bład alokacji pamieci.\n");
 		return; // Wyjście z funkcji w przypadku błędu
 	}
 	char A = 'A';
 	for (int i = 0; i < 6; i++) {
 		if (i != 0) *wspolczynniki = (double*)realloc(*wspolczynniki, (i + 2) * sizeof(double)); // Alokacja pamięci na tablicę
-		printf("Podaj wartość dla %c: ", A + i);
+		printf("Podaj wartosc dla %c: ", A + i);
 		scanf("%lf", *wspolczynniki + i); // Wczytywanie wartości do tablicy
-		printf("- Przyjęto wartość %.2lf\n", (*wspolczynniki)[i]);
+		printf("- Przyjeto wartosc %.2lf\n", (*wspolczynniki)[i]);
 		Sleep(500);
-
 	}
-
-	//printf("A: ");
-	//scanf("%lf", *wspolczynniki);
-	//if (*wspolczynniki == NULL) {
-	//	printf("Błąd alokacji pamięci.\n");
-	//	return; // Wyjście z funkcji w przypadku błędu
-	//}
-	////(*wspolczynniki)[0] = A;
-	////printf("%lf", *(wspolczynniki));
-
-	//*wspolczynniki = (double*)realloc(*wspolczynniki, 2 * sizeof(double));
-	//printf("B: ");
-	//scanf("%lf", *wspolczynniki + 1);
-	////(*wspolczynniki)[1] = B; //1
-
-	//*wspolczynniki = (double*)realloc(*wspolczynniki, 3 * sizeof(double));
-	//printf("C: ");
-	//scanf("%lf", *wspolczynniki + 2);
-	////*wspolczynniki + 2 = C; //2
-
-	//*wspolczynniki = (double*)realloc(*wspolczynniki, 4 * sizeof(double));
-	//printf("D: ");
-	//scanf("%lf", *wspolczynniki + 3);
-	////*(wspolczynniki + 3) = D; //3
-
-	//*wspolczynniki = (double*)realloc(*wspolczynniki, (1) * sizeof(double));
-	//while (*wspolczynniki + 4 == 0)
-	//{
-	//	printf("E (nie 0): ");
-	//	scanf("%lf", *wspolczynniki + 4);
-	//	if(*wspolczynniki + 4 == 0)
-	//	{
-	//		printf("Dawaj jeszcze raz gamoniu!!!\n");
-	//	}
-	//}
-	////*(wspolczynniki + 4) = E; //4
-
-	//*wspolczynniki = (double*)realloc(*wspolczynniki, (5) * sizeof(double));
-	//printf("F: ");
-	//scanf("%lf", *wspolczynniki + 5);
-	////*(wspolczynniki + 5) = F; //5
-
-	//// 0   1   2   3   4   5 
-	//// { } { } { } { } { } { }
-	////  wez wartosc do miejsca "0" w tablicy
-
 }
 
 void dziedzina(double* aMaly, double* aDuzy)
 {
 	printf("Podaj zakres dziedziny:\nNajmniejszy argument dziedziny: ");
 	scanf("%lf", aMaly);
-	printf("Największy argument dziedziny: ");
+	printf("Najwiekszy argument dziedziny: ");
 	scanf("%lf", aDuzy);
 }
 
 void alokacjaPamieci(double** tabWynikowa, double** tablicaSzum, int* rozmiar)
 {
-	printf("Podaj rozmiar tablicy/ Podaj ilosc argumentow w funkcji: ");
-	scanf("%d", rozmiar);
-	if (rozmiar == 0)
+	printf("Podaj ilosc argumentow w funkcji: ");
+
+	do
 	{
-		printf("Pusta tablica\n Brak argumentow dla funkcji\n");
-	}
-	else
-		*tabWynikowa = (double*)malloc(*rozmiar * sizeof(**tabWynikowa));
+		scanf("%d", rozmiar);
+		if (*rozmiar <= 0) printf("\n          !!! BLAD !!!\nIlosc argumentow funkcji musi byc dodatnia!!!\n\nSproboj jeszcze raz podac ilosc argumentow funkcji: ");
+
+	} while (*rozmiar <= 0);
+
+	*tabWynikowa = (double*)malloc(*rozmiar * sizeof(**tabWynikowa));
 	*tablicaSzum = (double*)malloc(*rozmiar * sizeof(**tablicaSzum));
 }
 
@@ -162,11 +111,11 @@ void dziedzinaSzumu(double* aMalySzumu, double* aDuzySzumu)
 	printf("Najmniejszy argument dziedziny szumu:\n");
 	scanf("%lf", aMalySzumu);
 	//if ()
-	printf("Największy argument dziedziny szumu:\n");
+	printf("Najwiekszy argument dziedziny szumu:\n");
 	scanf("%lf", aDuzySzumu);
 	while (*aMalySzumu > *aDuzySzumu)
 	{
-		printf("Najmniejsza wartośc amplitudy szumu jest większa od największej wartości amplitudy szumu.\nPodaj ponownie: \n");
+		printf("Najmniejsza wartośc amplitudy szumu jest wieksza od najwiekszej wartosci amplitudy szumu.\nPodaj ponownie: \n");
 		printf("Najmniejsza wartość amplitudy szumu:\n");
 		scanf("%lf", aMalySzumu);
 		printf("Największa wartość amplitudy szumu:\n");
@@ -183,11 +132,11 @@ void amplitudaiLosowanieSzumu(double * tabWynikowa, double* tablicaSzum, int roz
 	scanf("%lf", &procentZaszumienia);
 
 	if (procentZaszumienia < 0 || procentZaszumienia > 100) {
-		printf("Błędny procent zaszumienia.\n");
+		printf("Błedny procent zaszumienia.\n");
 		return;
 	}
 
-	printf("Podaj amplitudę zaszumienia: ");
+	printf("Podaj amplitude zaszumienia: ");
 	scanf("%lf", &amplitudaZaszumienia);
 
 	for (int i = 0; i < rozmiar; i++) {
@@ -205,31 +154,32 @@ void amplitudaiLosowanieSzumu(double * tabWynikowa, double* tablicaSzum, int roz
 
 void zapisDoPliku(double* tablicaSzum, int rozmiar)
 {
-	FILE* plik = fopen("export", "w");
+	FILE* plik = fopen("export.csv", "w");
 
-	if (plik == NULL) {
-		printf("Błąd otwarcia pliku.\n");
+	if (plik == NULL)
+	{
+		printf("Bład otwarcia pliku.\n");
 		return;
 	}
 
-	for (int i = 0; i < rozmiar; i++) {
+	for (int i = 0; i < rozmiar; i++)
+	{
 		fprintf(plik, "%.2lf\n", tablicaSzum[i]);
 	}
 
 	fclose(plik);
-	//FILE* plik;
-	//int i;
-	//plik = fopen("losowe.csv", "w");        //plik csv do otworzenia w excel
-	//if (plik != NULL)
-	//{
-	//	for (i = 0; i < rozmiar; i++)
-	//	{
-	//		fprintf(plik, "Wylosowana liczba szumu to: %.2lf\n", tablicaSzum[i]);  // frpitnf "wydrukuj plik" //; czyli w nastepnym kolmunach zapisywanie
-	//	}
-	//	fclose(plik);
-	//}
-	//else
-	//	printf("Plik nie mogl zostac otwarty");
+
+	FILE* plik1 = fopen("losowe.csv", "w");        //plik csv do otworzenia w excel
+	if (plik != NULL)
+	{
+		for (int i = 0; i < rozmiar; i++)
+		{
+			fprintf(plik1, "Wylosowana liczba szumu to: %.2lf\n", tablicaSzum[i]);  // frpitnf "wydrukuj plik" //; czyli w nastepnym kolmunach zapisywanie
+		}
+		fclose(plik1);
+	}
+	else
+		printf("Plik nie mogl zostac otwarty");
 }
 
 void wczytanieZPliku(double* tablicaSzum, int rozmiar)
