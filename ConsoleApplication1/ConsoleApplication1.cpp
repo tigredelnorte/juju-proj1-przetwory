@@ -18,11 +18,11 @@ void wyswietlMenu(char* gwiazdki)
 	printf("1. Zdefiniuj wspolczynniki A, B, C, D, E, F          [%c]\n", gwiazdki[0]);
 	printf("2. Zdefiniuj i wygeneruj wartosci funkcji            [%c]\n", gwiazdki[1]);
 	printf("3. Zdefiniuj i wygeneruj zaszumione wartosci funkcji [%c]\n", gwiazdki[2]);
-	printf("4. Zapisz wartosci funkcji do pliku\n");
-	printf("5. Zapisz wartosci szumu funkcji do pliku\n");
-	printf("6. Odczytaj wartosci funkcji z pliku\n");
-	printf("7. Odczytaj wartosci szumu funkcji z pliku\n");
-	printf("8. Odszumianie wartosci funkcji z pliku\n");
+	printf("4. Zapisz wartosci funkcji do pliku                  [%c]\n", gwiazdki[3]);
+	printf("5. Zapisz wartosci szumu funkcji do pliku            [%c]\n", gwiazdki[4]);
+	printf("6. Odczytaj wartosci funkcji z pliku                 [%c]\n", gwiazdki[5]);
+	printf("7. Odczytaj wartosci szumu funkcji z pliku           [%c]\n", gwiazdki[6]);
+	printf("8. Odszumianie wartosci funkcji z pliku              [%c]\n", gwiazdki[7]);
 	printf("9. Wyjscie\n");
 	printf("Wybierz opcje (1-9): ");
 }
@@ -38,7 +38,7 @@ void tabWspolczynnikow(double** wspolczynniki)
 	}
 	char A = 'A';
 	for (int i = 0; i < 6; i++) {
-		if (i != 0) *wspolczynniki = (double*)realloc(*wspolczynniki, (i + 2) * sizeof(double)); // Alokacja pamięci na tablicę
+		if (i != 0) *wspolczynniki = (double*)realloc(*wspolczynniki, (i + 1) * sizeof(double)); // Alokacja pamięci na tablicę
 		printf("Podaj wartosc dla %c: ", A + i);
 		scanf("%lf", *wspolczynniki + i); // Wczytywanie wartości do tablicy
 		printf("- Przyjeto wartosc %.2lf\n", (*wspolczynniki)[i]);
@@ -170,37 +170,46 @@ void zapisDoPliku(double* tablicaWartosci, int rozmiar, double pierwszyArg, doub
 	}
 	else
 	{
-		printf("\nBład otwarcia pliku.\n");
+		printf("\nBlad otwarcia pliku.\n");
 	}
 }
 
 void wczytanieZPliku(double** tablicaY, double** tablicaX)
 {
-	*tablicaY = (double*)malloc(sizeof(double));
-	*tablicaX = (double*)malloc(sizeof(double));
+
 	char nazwa[20];
 	printf("Podaj nazwe pliku do odczytu danych: ");
 	scanf("%s", nazwa);
 	char buf[0x26];
 	snprintf(buf, sizeof(nazwa) + 5, "%s.csv", nazwa);
 	FILE* plik = fopen(buf, "r");
-	if (plik != NULL)
+	if (plik == NULL)
 	{
-		int n = 0;
-		if (i != 0) *tablicaY = (double*)realloc(*tablicaY, (i + 2) * sizeof(double)); // Alokacja pamięci na tablicę
+		printf("\nBlad otwarcia pliku.\n");
+		return;
+	}
+	
+	int rozmiar = 1;
+	int n = 0;
+	*tablicaY = (double*)malloc(sizeof(double));
+	*tablicaX = (double*)malloc(sizeof(double));
 
-		while (fgetc(plik) != EOF)
-		{
-			fscanf(plik, "%lf ; %lf \n", &tablicaX[n], &tablicaY[n]);
-			n++;
-		}
-		fclose(plik);
-		printf("\nDane zosatly odczytane z pliku %s\n", buf);
-	}
-	else
+	while (fgetc(plik) != EOF)
 	{
-		printf("\nBład otwarcia pliku.\n");
+		if (rozmiar <= n)
+		{
+			rozmiar = 2 * rozmiar;
+			*tablicaY = (double*)realloc(*tablicaY, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
+			*tablicaX = (double*)realloc(*tablicaX, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
+			
+		}
+		fscanf(plik, "%lf ; %lf \n", *tablicaX + n, *tablicaY + n);
+		printf("- Przyjeto wartosc X: %.2lf i  Y: %.2lf \n", (*tablicaX)[n], (*tablicaY)[n]);
+		n++;
 	}
+	printf("\nDane zosatly odczytane z pliku %s\n", buf);
+	printf("Przyjete odczyty: %d\n", n);
+	fclose(plik);
 }
 void filtrujZSzumu(double* tablicaSzum, int rozmiar) 
 {
@@ -212,9 +221,9 @@ int main()
 	srand(time(NULL));
 	setlocale(LC_ALL, "polish_poland");
 
-	char gwiazdki[4]
+	char gwiazdki[8]
 	{
-		' ', ' ', ' ', ' '
+		' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '
 	};
 	char star = '*';
 	char spacja = ' ';
@@ -234,6 +243,10 @@ int main()
 		case 1:
 			tabWspolczynnikow(&wspolczynniki);
 			if (wspolczynniki != NULL) gwiazdki[0] = star;
+			printf("Tabela wyników:\n");
+			for (int i = 0; i <= 10; i++) {
+				printf("Wartosc dla X: %d wynosi: %.2lf\n", i, wspolczynniki[i]);
+			}
 			break;
 		case 2:
 			if (wspolczynniki == NULL)
@@ -271,6 +284,7 @@ int main()
 				{
 					printf("Wartosc dla X: %.2lf wynosi: %.2lf\n", pierwszyArg + (i * skokArg), tabSzum[i]);
 				}
+				gwiazdki[2] = star;
 			}
 			break;
 		case 4:
@@ -279,23 +293,43 @@ int main()
 				printf("\n!!! BLAD !!!\nFunkcja nie zostala jeszcze wygenerowana.\n");
 			}
 			else
+			{
 				zapisDoPliku(tabWynik, rozmiar, pierwszyArg, skokArg);
+				gwiazdki[3] = star;
+			}
 			break;
 		case 5:
 			if (tabSzum == NULL)
 			{
 				printf("\n!!! BLAD !!!\nFunkcja nie zostala jeszcze zaszumiona.\n");
 			} else
+			{
 				zapisDoPliku(tabSzum, rozmiar, pierwszyArg, skokArg);
+				gwiazdki[4] = star;
+			}
 			break;
 		case 6:
 			wczytanieZPliku(&odczytTabWynikY, &odczytTabWynikX);
+			if (odczytTabSzumX != NULL)
+			{
+				gwiazdki[5] = star;
+			}
+			//printf("Pobrane wartości:\n");
+			//for (int i = 0; i < 11; i++) {
+			//	printf("Wartość X %d: %.2lf\n", i + 1, odczytTabWynikX[i]);
+			//	printf("Wartość Y %d: %.2lf\n", i + 1, odczytTabWynikY[i]);
+			//}
 			break;
 		case 7:
 			wczytanieZPliku(&odczytTabSzumY, &odczytTabSzumX);
+			if (odczytTabSzumX != NULL)
+			{
+				gwiazdki[6] = star;
+			}
 			break;
 		case 8:
 			filtrujZSzumu(tabSzum, rozmiar);
+			gwiazdki[7] = star;
 			break;
 		case 9:
 			printf("Program zostanie zakończony.\n");
