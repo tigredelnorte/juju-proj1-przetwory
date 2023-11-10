@@ -154,32 +154,22 @@ void amplitudaiLosowanieSzumu(double * tabWynikowa, double* tablicaSzum, int roz
 
 void zapisDoPliku(double* tablicaSzum, int rozmiar)
 {
-	FILE* plik = fopen("export.csv", "w");
+	char nazwa[20];
+	printf("Podaj nazwe pliku: ");
+	scanf("%s", nazwa);
+	char buf[0x25];
+	snprintf(buf, sizeof(nazwa) + 5, "%s.csv", nazwa);
+	FILE* plik = fopen(buf, "w");
 
 	if (plik == NULL)
 	{
-		printf("Bład otwarcia pliku.\n");
-		return;
-	}
-
-	for (int i = 0; i < rozmiar; i++)
-	{
-		fprintf(plik, "%.2lf\n", tablicaSzum[i]);
-	}
-
-	fclose(plik);
-
-	FILE* plik1 = fopen("losowe.csv", "w");        //plik csv do otworzenia w excel
-	if (plik != NULL)
-	{
 		for (int i = 0; i < rozmiar; i++)
 		{
-			fprintf(plik1, "Wylosowana liczba szumu to: %.2lf\n", tablicaSzum[i]);  // frpitnf "wydrukuj plik" //; czyli w nastepnym kolmunach zapisywanie
+			fprintf(plik, "%.2lf\n", tablicaSzum[i]);
 		}
-		fclose(plik1);
 	}
 	else
-		printf("Plik nie mogl zostac otwarty");
+		printf("Bład otwarcia pliku.\n");
 }
 
 void wczytanieZPliku(double* tablicaSzum, int rozmiar)
