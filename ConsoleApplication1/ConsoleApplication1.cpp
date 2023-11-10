@@ -201,7 +201,6 @@ void wczytanieZPliku(double** tablicaY, double** tablicaX)
 			rozmiar = 2 * rozmiar;
 			*tablicaY = (double*)realloc(*tablicaY, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
 			*tablicaX = (double*)realloc(*tablicaX, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
-			
 		}
 		fscanf(plik, "%lf ; %lf \n", *tablicaX + n, *tablicaY + n);
 		printf("- Przyjeto wartosc X: %.2lf i  Y: %.2lf \n", (*tablicaX)[n], (*tablicaY)[n]);
@@ -310,15 +309,15 @@ int main()
 			break;
 		case 6:
 			wczytanieZPliku(&odczytTabWynikY, &odczytTabWynikX);
-			if (odczytTabSzumX != NULL)
+			if (odczytTabWynikX != NULL)
 			{
 				gwiazdki[5] = star;
 			}
-			//printf("Pobrane wartości:\n");
-			//for (int i = 0; i < 11; i++) {
-			//	printf("Wartość X %d: %.2lf\n", i + 1, odczytTabWynikX[i]);
-			//	printf("Wartość Y %d: %.2lf\n", i + 1, odczytTabWynikY[i]);
-			//}
+			printf("Pobrane wartości:\n");
+			for (int i = 0; i < 11; i++) {
+				printf("Wartość X %d: %.2lf\n", i + 1, odczytTabWynikX[i]);
+				printf("Wartość Y %d: %.2lf\n", i + 1, odczytTabWynikY[i]);
+			}
 			break;
 		case 7:
 			wczytanieZPliku(&odczytTabSzumY, &odczytTabSzumX);
