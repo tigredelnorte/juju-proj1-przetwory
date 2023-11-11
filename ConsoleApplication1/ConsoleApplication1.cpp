@@ -210,9 +210,28 @@ void wczytanieZPliku(double** tablicaY, double** tablicaX)
 	printf("Przyjete odczyty: %d\n", n);
 	fclose(plik);
 }
-void wyswietlMenuFiltracji(int* typ, int* zrodlo)
-{
 
+void wyswietlMenuFiltracji(int* typ, int* zrodlo, int* okno)
+{
+	printf("\nMENU odszumienia wartosci funkcji\n");
+	do
+	{
+		printf("\nWybierz metode odszumiania.\n1. Filtr medianowy\n2. Filtr sredniej ruchomej: ");
+		scanf("%d", typ);
+		if (!(*typ == 1 || *typ == 2)) printf("\nBLAD Sproboj ponownie\n");
+	} while (!(*typ == 1 || *typ == 2));
+	do
+	{
+		printf("\nWybierz dane do odszumienia\n1. Wygenerowane wartosci zaszumionej funkcji (#2)\n2. Wczytane z pliku wartosci funkcji(#7)\n: ");
+		scanf("%d", zrodlo);
+		if (!(*zrodlo == 1 || *zrodlo == 2)) printf("\nBLAD Sproboj ponownie\n");
+	} while (!(*zrodlo == 1 || *zrodlo == 2));
+	do
+	{
+		printf("\nPodaj zakres okna filtra odszumiania (liczba niepazysta): ");
+		scanf("%d", okno);
+		if (!(*okno > 0 && *okno % 2 == 1)) printf("\nBLAD Sproboj ponownie\n");
+	} while (!(*okno > 0 && *okno % 2 == 1));
 }
 void filtrujZSzumu(double* tablicaSzum, int rozmiar) 
 {
@@ -331,9 +350,9 @@ int main()
 			}
 			break;
 		case 8:
-			int typFiltracji, zrodloSygnalu;
-			wyswietlMenuFiltracji(&typFiltracji, &zrodloSygnalu);
-			switch(zrod)
+			int typFiltracji, zrodloSygnalu, oknoFiltra;
+			wyswietlMenuFiltracji(&typFiltracji, &zrodloSygnalu, &oknoFiltra);
+			//switch(zrod)
 			filtrujZSzumu(tabSzum, rozmiar);
 			gwiazdki[7] = star;
 			break;
