@@ -233,7 +233,11 @@ void wyswietlMenuFiltracji(int* typ, int* zrodlo, int* okno)
 		if (!(*okno > 0 && *okno % 2 == 1)) printf("\nBLAD Sproboj ponownie\n");
 	} while (!(*okno > 0 && *okno % 2 == 1));
 }
-void filtrujZSzumu(double* tablicaSzum, int rozmiar) 
+void filtrujZSzumuMediana(double* tablicaSzum, int okno) 
+{
+
+}
+void filtrujZSzumuSrednia(double* tablicaSzum, int okno)
 {
 
 }
@@ -352,10 +356,31 @@ int main()
 		case 8:
 			int typFiltracji, zrodloSygnalu, oknoFiltra;
 			wyswietlMenuFiltracji(&typFiltracji, &zrodloSygnalu, &oknoFiltra);
-			//switch(zrod)
-			filtrujZSzumu(tabSzum, rozmiar);
-			gwiazdki[7] = star;
-			break;
+			//printf("typFiltracji: %d\n", typFiltracji);
+			//printf("zrodloSygnalu: %d\n", zrodloSygnalu);
+			//printf("oknoFiltra: %d\n", oknoFiltra);
+			if (typFiltracji == 1)
+			{
+				if (zrodloSygnalu == 1)
+				{;
+					filtrujZSzumuMediana(tabSzum, oknoFiltra);
+				}
+				if (zrodloSygnalu == 1)
+				{
+					filtrujZSzumuMediana(odczytTabSzumY, oknoFiltra);
+				}
+			}
+			if (typFiltracji == 2)
+			{
+				if (zrodloSygnalu == 1)
+				{
+					filtrujZSzumuSrednia(tabSzum, oknoFiltra);
+				}
+				if (zrodloSygnalu == 1)
+				{
+					filtrujZSzumuSrednia(odczytTabSzumY, oknoFiltra);
+				}
+			}
 		case 9:
 			printf("Program zostanie zakończony.\n");
 			break;
