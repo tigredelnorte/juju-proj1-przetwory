@@ -210,6 +210,10 @@ void wczytanieZPliku(double** tablicaY, double** tablicaX)
 	printf("Przyjete odczyty: %d\n", n);
 	fclose(plik);
 }
+void wyswietlMenuFiltracji(int* typ, int* zrodlo)
+{
+
+}
 void filtrujZSzumu(double* tablicaSzum, int rozmiar) 
 {
 
@@ -327,6 +331,9 @@ int main()
 			}
 			break;
 		case 8:
+			int typFiltracji, zrodloSygnalu;
+			wyswietlMenuFiltracji(&typFiltracji, &zrodloSygnalu);
+			switch(zrod)
 			filtrujZSzumu(tabSzum, rozmiar);
 			gwiazdki[7] = star;
 			break;
