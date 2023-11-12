@@ -19,9 +19,9 @@ void wyswietlMenu(char* gwiazdki)
 	printf("2. Zdefiniuj i wygeneruj wartosci funkcji            [%c]\n", gwiazdki[1]);
 	printf("3. Zdefiniuj i wygeneruj zaszumione wartosci funkcji [%c]\n", gwiazdki[2]);
 	printf("4. Zapisz wartosci funkcji do pliku                  [%c]\n", gwiazdki[3]);
-	printf("5. Zapisz wartosci szumu funkcji do pliku            [%c]\n", gwiazdki[4]);
+	printf("5. Zapisz wartosci zaszumionej funkcji do pliku      [%c]\n", gwiazdki[4]);
 	printf("6. Odczytaj wartosci funkcji z pliku                 [%c]\n", gwiazdki[5]);
-	printf("7. Odczytaj wartosci szumu funkcji z pliku           [%c]\n", gwiazdki[6]);
+	printf("7. Odczytaj wartosci zaszumionej funkcji z pliku     [%c]\n", gwiazdki[6]);
 	printf("8. Odszumianie wartosci funkcji z pliku              [%c]\n", gwiazdki[7]);
 	printf("9. Wyjscie\n");
 	printf("Wybierz opcje (1-9): ");
@@ -37,8 +37,21 @@ void tabWspolczynnikow(double** wspolczynniki)
 		return; // Wyjście z funkcji w przypadku błędu
 	}
 	char A = 'A';
+	double* schowek;
 	for (int i = 0; i < 6; i++) {
-		if (i != 0) *wspolczynniki = (double*)realloc(*wspolczynniki, (i + 1) * sizeof(double)); // Alokacja pamięci na tablicę
+		if (i != 0)
+		{
+			schowek = (double*)realloc(*wspolczynniki, (i + 1) * sizeof(double));
+			if (schowek != NULL)
+			{
+				*wspolczynniki = schowek;
+			}
+			else
+			{
+				printf("\nBLAD realokacji pamieci\nSproboj ponownie za chwile :)\n");
+				return;
+			}
+		}
 		printf("Podaj wartosc dla %c: ", A + i);
 		scanf("%lf", *wspolczynniki + i); // Wczytywanie wartości do tablicy
 		printf("- Przyjeto wartosc %.2lf\n", (*wspolczynniki)[i]);
@@ -52,6 +65,16 @@ void dziedzina(double* pierwszyArg, double* ostatniArg)
 	scanf("%lf", pierwszyArg);
 	printf("Najwiekszy argument dziedziny: ");
 	scanf("%lf", ostatniArg);
+
+	while (*pierwszyArg > *ostatniArg)
+	{
+		printf("Najmniejsza wartośc amplitudy szumu jest większa od największej wartości amplitudy szumu.\nPodaj ponownie: \n");
+		printf("Najmniejsza wartość amplitudy szumu:\n");
+		scanf("%lf", pierwszyArg);
+		printf("Największa wartość amplitudy szumu:\n");
+		scanf("%lf", ostatniArg);
+	}
+
 }
 
 void alokacjaPamieci(double** tabWynikowa, double** tablicaSzum, int* rozmiar)
@@ -129,13 +152,20 @@ void amplitudaiLosowanieSzumu(double * tabWynikowa, double* tablicaSzum, int roz
 	printf("\nPodaj procent zaszumienia (0-100): ");
 	scanf("%lf", &procentZaszumienia);
 
-	if (procentZaszumienia < 0 || procentZaszumienia > 100) {
-		printf("Błedny procent zaszumienia.\n");
-		return;
+	while (procentZaszumienia < 0 || procentZaszumienia > 100) {
+		printf("Bledny procent zaszumienia.\n");
+		printf("\nPodaj procent zaszumienia (0-100): ");
+		scanf("%lf", &procentZaszumienia);
 	}
 
-	printf("Podaj amplitude zaszumienia: ");
+	printf("Podaj amplitude zaszumienia (liczba wieksza od 0): ");
 	scanf("%lf", &amplitudaZaszumienia);
+	while (!(amplitudaZaszumienia > 0))
+	{
+		printf("Bledna amplituda zaszumienia.\n");
+		printf("\nPodaj liczbe wieksza od 0: ");
+		scanf("%lf", &amplitudaZaszumienia);
+	}
 
 	for (int i = 0; i <= rozmiar; i++) {
 		tablicaSzum[i] = tabWynikowa[i]; // Skopiuj oryginalne wyniki
@@ -177,7 +207,6 @@ void zapisDoPliku(double* tablicaWartosci, int rozmiar, double pierwszyArg, doub
 
 void wczytanieZPliku(double** tablicaY, double** tablicaX, int* rozmiarOdczytanychDanych)
 {
-
 	char nazwa[20];
 	printf("Podaj nazwe pliku do odczytu danych: ");
 	scanf("%s", nazwa);
@@ -195,27 +224,28 @@ void wczytanieZPliku(double** tablicaY, double** tablicaX, int* rozmiarOdczytany
 	*tablicaY = (double*)malloc(sizeof(double));
 	*tablicaX = (double*)malloc(sizeof(double));
 	double x, y;
-	//while (fscanf(plik, "%lf ; %lf", &x, &y) == 2) {
-	//	// Przetwarzanie danych
-	//	printf("%.6lf ; %.6lf\n", x, y);
-	//}
-	while (fgetc(plik) != EOF)
+	while (fscanf(plik, "%lf ; %lf\n", &x, &y) == 2)
 	{
 		if (rozmiar <= n)
 		{
+			double* schowek1, * schowek2;
 			rozmiar = 2 * rozmiar;
-			*tablicaY = (double*)realloc(*tablicaY, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
-			*tablicaX = (double*)realloc(*tablicaX, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
-		}
-		//fscanf(plik, "%lf ; %lf \n", *tablicaX + n, *tablicaY + n);
-			if (fscanf(plik, "%lf ; %lf\n", &x, &y) == 2) {
-				// Przetwarzanie danych
-				(*tablicaX)[n] = x;
-				(*tablicaY)[n] = y;
+			schowek1 = (double*)realloc(*tablicaX, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
+			schowek2 = (double*)realloc(*tablicaY, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
+			if (schowek1 != NULL || schowek2 != NULL)
+			{
+				*tablicaX = schowek1;
+				*tablicaY = schowek2;
 			}
-		//fscanf(plik, "%lf ; %lf", &x, &y);
-		//(*tablicaX )[n] = x;
-		//(*tablicaY)[n] = y;
+			else
+			{
+				printf("\nBLAD realokacji pamieci\nSproboj ponownie za chwile :)\n");
+				return;
+			}
+
+		}
+		(*tablicaX)[n] = x;
+		(*tablicaY)[n] = y;
 		printf("- Przyjeto wartosc X: %lf i  Y: %lf \n", (*tablicaX)[n], (*tablicaY)[n]);
 		n++;
 	}
@@ -425,27 +455,50 @@ int main()
 
 			if (zrodloSygnalu == 1)
 			{
-				rozmiarOdszum = rozmiar;
-				for (int i = 0; i < rozmiarOdszum; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
-					daneOryginalneY[i] = tabSzum[i];
-					odszumionySygnalY[i] = tabSzum[i];
-					wybranySygnalX[i] = pierwszyArg + i * skokArg;
+				if (rozmiar <1)
+				{
+					printf("\n!!! BLAD !!!\nFunkcja nie zostala jeszcze wygenerowana.\n");
+					//return;
 				}
+				else if (tabSzum == NULL)
+				{
+					printf("\n!!! BLAD !!!\nFunkcja nie zostala jeszcze zaszumiona.\n");
+					//return;
+				}
+				else
+				{
+					rozmiarOdszum = rozmiar;
+					for (int i = 0; i < rozmiarOdszum; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
+						daneOryginalneY[i] = tabSzum[i];
+						odszumionySygnalY[i] = tabSzum[i];
+						wybranySygnalX[i] = pierwszyArg + i * skokArg;
+					}
+				}
+
 			}
 			else if (zrodloSygnalu == 2)
 			{
-				rozmiarOdszum = rozmiarOdczytDanychSzum;
-				for (int i = 0; i < rozmiarOdszum; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
-					daneOryginalneY[i] = odczytTabSzumY[i];
-					odszumionySygnalY[i] = odczytTabSzumY[i];
-					wybranySygnalX[i] = odczytTabSzumX[i];
+				if (rozmiarOdczytDanychSzum < 1)
+				{
+					printf("\n!!! BLAD !!!\nZaszumiona funkcja nie zostala jeszcze wczytana.\n");
+					//return;
+				}
+				else
+				{
+					rozmiarOdszum = rozmiarOdczytDanychSzum;
+					for (int i = 0; i < rozmiarOdszum; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
+						daneOryginalneY[i] = odczytTabSzumY[i];
+						odszumionySygnalY[i] = odczytTabSzumY[i];
+						wybranySygnalX[i] = odczytTabSzumX[i];
+					}
 				}
 			}
 
 			if (typFiltracji == 1) //MEDIANA
 			{
 				if (oknoFiltra > rozmiarOdszum) {
-					printf("Bledna szerokosc okna filtur.\n");
+					printf("Bledna szerokosc okna filtra.\n");
+					//return;
 				}
 				else
 				{
@@ -459,7 +512,8 @@ int main()
 			else if (typFiltracji == 2) //SREDNIA
 			{
 				if (oknoFiltra > rozmiarOdszum) {
-					printf("Bledna szerokosc okna.\n");
+					printf("Bledna szerokosc okna filtra.\n");
+					//return;
 				}
 				else
 				{
@@ -470,7 +524,6 @@ int main()
 					}
 				}
 			}
-
 			break;
 		case 9:
 			printf("Program zostanie zakonczony.\n");
