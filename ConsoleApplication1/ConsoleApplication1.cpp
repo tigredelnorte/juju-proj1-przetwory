@@ -172,6 +172,7 @@ void zapisDoPliku(double* tablicaWartosci, int rozmiar, double pierwszyArg, doub
 	{
 		printf("\nBlad otwarcia pliku.\n");
 	}
+	free(plik);
 }
 
 void wczytanieZPliku(double** tablicaY, double** tablicaX, int* rozmiarOdczytanychDanych)
@@ -236,17 +237,53 @@ void wyswietlMenuFiltracji(int* typ, int* zrodlo, int* okno)
 	} while (!(*okno > 1 && *okno % 2 == 1));
 }
 
-void filtrujZSzumu_Mediana(double* tablicaSzumY, int rozmiar, int okno, double* odszumionySygnalY)
-{
+double obliczMediane(double* tablicaOkna, int rozmiarOkno) {
+	double* kopiaTablicy = (double*)malloc(rozmiarOkno * sizeof(double));
+	for (int i = 0; i < rozmiarOkno; i++) {
+		kopiaTablicy[i] = tablicaOkna[i];
+	}
 
+	for (int i = 0; i < rozmiarOkno - 1; i++) {
+		for (int j = 0; j < rozmiarOkno - i - 1; j++) {
+			if (kopiaTablicy[j] > kopiaTablicy[j + 1]) {
+				double temp = kopiaTablicy[j];
+				kopiaTablicy[j] = kopiaTablicy[j + 1];
+				kopiaTablicy[j + 1] = temp;
+			}
+		}
+	}
+
+	double mediana;
+	if (rozmiarOkno % 2 == 0) {
+		mediana = (kopiaTablicy[rozmiarOkno / 2 - 1] + kopiaTablicy[rozmiarOkno / 2]) / 2.0;
+	}
+	else {
+		mediana = kopiaTablicy[rozmiarOkno / 2];
+	}
+
+	free(kopiaTablicy);
+
+	return mediana;
+}
+
+void filtrujZSzumu_Mediana(double* daneOryginalne, int rozmiar, int szerokoscOkna, double* danePoOdszumieniu)
+{
+	int polowaOkna = szerokoscOkna / 2;
+	double* okno = (double*)malloc(szerokoscOkna * sizeof(double));
+
+	for (int i = polowaOkna; i < rozmiar - polowaOkna; i++) {
+		for (int j = 0; j < szerokoscOkna; j++) {
+			okno[j] = daneOryginalne[i - polowaOkna + j];
+		}
+
+		danePoOdszumieniu[i] = obliczMediane(okno, szerokoscOkna);
+	}
+
+	free(okno);
 }
 
 void filtrujZSzumu_Srednia(double* daneOryginalne, int rozmiar, int okno, double* danePoOdszumieniu)
 {
-	//printf("Pobrane wartości:\n");
-	//for (int i = 0; i < rozmiar; i++) {
-	//	printf("Wartość %.2lf\n", *(tablicaSzumY + i));
-	//}
 	int polowaOkna = okno / 2;
 
 	for (int i = polowaOkna; i < rozmiar - polowaOkna; i++) {
@@ -274,7 +311,7 @@ int main()
 	double* wspolczynniki = NULL;
 	double pierwszyArg, ostatniArg;
 	int rozmiar = NULL;
-	int rozmiarOdczytanychDanych = NULL;
+	int rozmiarOdczytDanychSzum = NULL, rozmiarOdczytDanych = NULL ;
 	double* tabWynik = NULL, * tabSzum = NULL, skokArg = NULL;
 	double* odczytTabWynikY = NULL, * odczytTabSzumY = NULL, * odczytTabWynikX = NULL, * odczytTabSzumX = NULL;
 	do
@@ -352,7 +389,7 @@ int main()
 			}
 			break;
 		case 6:
-			wczytanieZPliku(&odczytTabWynikY, &odczytTabWynikX, &rozmiarOdczytanychDanych);
+			wczytanieZPliku(&odczytTabWynikY, &odczytTabWynikX, &rozmiarOdczytDanych);
 			if (odczytTabWynikX != NULL)
 			{
 				gwiazdki[5] = star;
@@ -364,7 +401,7 @@ int main()
 			}
 			break;
 		case 7:
-			wczytanieZPliku(&odczytTabSzumY, &odczytTabSzumX, &rozmiarOdczytanychDanych);
+			wczytanieZPliku(&odczytTabSzumY, &odczytTabSzumX, &rozmiarOdczytDanychSzum);
 			if (odczytTabSzumX != NULL)
 			{
 				gwiazdki[6] = star;
@@ -386,17 +423,12 @@ int main()
 				for (int i = 0; i < rozmiarOdszum; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
 					daneOryginalneY[i] = tabSzum[i];
 					odszumionySygnalY[i] = tabSzum[i];
-				}
-
-				for (int i = 0; i < rozmiarOdszum; i++)
-				{
-					printf("TEST");
 					wybranySygnalX[i] = pierwszyArg + i * skokArg;
 				}
 			}
 			else if (zrodloSygnalu == 2)
 			{
-				rozmiarOdszum = rozmiarOdczytanychDanych;
+				rozmiarOdszum = rozmiarOdczytDanychSzum;
 				for (int i = 0; i < rozmiarOdszum; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
 					daneOryginalneY[i] = odczytTabSzumY[i];
 					odszumionySygnalY[i] = odczytTabSzumY[i];
@@ -406,17 +438,27 @@ int main()
 
 			if (typFiltracji == 1) //MEDIANA
 			{
-				//filtrujZSzumu_Mediana(wybranySygnalY, rozmiarOdszum, oknoFiltra, odszumionySygnalY);
+				if (oknoFiltra > rozmiarOdszum) {
+					printf("Bledna szerokosc okna filtur.\n");
+				}
+				else
+				{
+					filtrujZSzumu_Mediana(daneOryginalneY, rozmiarOdszum, oknoFiltra, odszumionySygnalY);
+					printf("Wartości przed (Y) i po (Y#) odszumieniu:\n");
+					for (int i = 0; i < rozmiarOdszum; i++) {
+						printf("X: %.2lf Y: %.2lf Y#: %.2lf\n", wybranySygnalX[i], daneOryginalneY[i], odszumionySygnalY[i]);
+					}
+				}
 			}
 			else if (typFiltracji == 2) //SREDNIA
 			{
 				if (oknoFiltra > rozmiarOdszum) {
-					printf("Błędna szerokość okna.\n");
+					printf("Bledna szerokosc okna.\n");
 				}
 				else
 				{
 					filtrujZSzumu_Srednia(daneOryginalneY, rozmiarOdszum, oknoFiltra, odszumionySygnalY);
-					printf("Wartości przed (Y) i po (Y#) odszumieniu:\n");
+					printf("Wartosci przed (Y) i po (Y#) odszumieniu:\n");
 					for (int i = 0; i < rozmiarOdszum; i++) {
 						printf("X: %.2lf Y: %.2lf Y#: %.2lf\n", wybranySygnalX[i], daneOryginalneY[i], odszumionySygnalY[i]);
 					}
@@ -425,15 +467,18 @@ int main()
 
 			break;
 		case 9:
-			printf("Program zostanie zakończony.\n");
+			printf("Program zostanie zakonczony.\n");
 			break;
 		default:
-			printf("Nieprawidłowy wybór. Wybierz opcję od 1 do 9.\n");
+			printf("Nieprawidlowy wybor. Wybierz opcje od 1 do 9.\n");
 			break;
 		}
 	} while (wyborMenu != 9);
-	//free(tabWynikowa);
-	//free(tablicaSzum);
+	free(wspolczynniki);
+	free(tabWynik);
+	free(tabSzum);
+	free(odczytTabSzumX);
+	free(odczytTabSzumY);
 	return 0;
 
 }
