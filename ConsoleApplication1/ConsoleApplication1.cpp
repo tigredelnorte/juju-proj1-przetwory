@@ -95,7 +95,7 @@ double obliczFunkcje(double x, double* wspolczynniki)
 void generatorFunkcji(double* wspolczynniki, double pierwszyArg, double* tabWynikowa, int rozmiar, double skokArg)
 {
 	double biezacyX = pierwszyArg;
-	for (int i = 0; i <= rozmiar; i++)
+	for (int i = 0; i < rozmiar; i++)
 	{
 		double wynikFunkcji = obliczFunkcje(biezacyX, wspolczynniki);
 		*(tabWynikowa + i) = wynikFunkcji;
@@ -161,7 +161,7 @@ void zapisDoPliku(double* tablicaWartosci, int rozmiar, double pierwszyArg, doub
 
 	if (plik != NULL)
 	{
-		for (int i = 0; i <= rozmiar; i++)
+		for (int i = 0; i < rozmiar; i++)
 		{
 			fprintf(plik, "%lf ; %lf\n", pierwszyArg + (i * skokArg), tablicaWartosci[i]);
 		}
@@ -194,7 +194,11 @@ void wczytanieZPliku(double** tablicaY, double** tablicaX, int* rozmiarOdczytany
 	int n = 0;
 	*tablicaY = (double*)malloc(sizeof(double));
 	*tablicaX = (double*)malloc(sizeof(double));
-
+	double x, y;
+	//while (fscanf(plik, "%lf ; %lf", &x, &y) == 2) {
+	//	// Przetwarzanie danych
+	//	printf("%.6lf ; %.6lf\n", x, y);
+	//}
 	while (fgetc(plik) != EOF)
 	{
 		if (rozmiar <= n)
@@ -203,9 +207,11 @@ void wczytanieZPliku(double** tablicaY, double** tablicaX, int* rozmiarOdczytany
 			*tablicaY = (double*)realloc(*tablicaY, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
 			*tablicaX = (double*)realloc(*tablicaX, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
 		}
-
-		fscanf(plik, "%lf ; %lf \n", *tablicaX + n, *tablicaY + n);
-		printf("- Przyjeto wartosc X: %.2lf i  Y: %.2lf \n", (*tablicaX)[n], (*tablicaY)[n]);
+		//fscanf(plik, "%lf ; %lf \n", *tablicaX + n, *tablicaY + n);
+		fscanf(plik, "%lf ; %lf", &x, &y);
+		(*tablicaX )[n] = x;
+		(*tablicaY)[n] = y;
+		printf("- Przyjeto wartosc X: %lf i  Y: %lf \n", (*tablicaX)[n], (*tablicaY)[n]);
 		n++;
 	}
 	rozmiarOdczytanychDanych[0] = n;
@@ -323,7 +329,7 @@ int main()
 		case 1:
 			tabWspolczynnikow(&wspolczynniki);
 			if (wspolczynniki != NULL) gwiazdki[0] = star;
-			printf("Tabela wyników:\n");
+			printf("\nTabela wyników:\n");
 			for (int i = 0; i < 6; i++) {
 				printf("Wartosc dla X: %d wynosi: %.2lf\n", i, wspolczynniki[i]);
 			}
@@ -393,11 +399,6 @@ int main()
 			if (odczytTabWynikX != NULL)
 			{
 				gwiazdki[5] = star;
-			}
-			printf("Pobrane wartości:\n");
-			for (int i = 0; i < 11; i++) {
-				printf("Wartość X %d: %.2lf\n", i + 1, odczytTabWynikX[i]);
-				printf("Wartość Y %d: %.2lf\n", i + 1, odczytTabWynikY[i]);
 			}
 			break;
 		case 7:
@@ -482,11 +483,7 @@ int main()
 	return 0;
 
 }
-// Wypisanie wartości z tablicy
 //printf("Pobrane wartości:\n");
 //for (int i = 0; i < 6; i++) {
 //	printf("Wartość %d: %.2lf\n", i + 1, wspolczynniki[i]);
 //}
-//Jedna dziedzina jest losowanie szumu w danej amplitudzie
-//Druga dziedzina jest losowanie szansy na wylosowanie wartości szumu
-//A trzecia dziedzina mogło by być losowanie dziedziny
