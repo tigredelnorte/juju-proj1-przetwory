@@ -203,6 +203,30 @@ void amplitudaiLosowanieSzumu(double * tabWynikowa, double* tablicaSzum, int roz
 	}
 }
 
+void zapisDoPliku(double* tablicaWartosci, int rozmiar, double pierwszyArg, double skokArg )
+{
+	char nazwa[20];
+	printf("Podaj nazwe pliku: ");
+	scanf("%s", nazwa);
+	char buf[0x26];
+	snprintf(buf, sizeof(nazwa) + 5, "%s.csv", nazwa);
+	FILE* plik = fopen(buf, "w");
+
+	if (plik != NULL)
+	{
+		for (int i = 0; i < rozmiar; i++)
+		{
+			fprintf(plik, " %lf ; %lf\n", pierwszyArg + (i * skokArg), tablicaWartosci[i]);
+		}
+		fclose(plik);
+		printf("\nDane zosatly zapisane do pliku %s\n", buf);
+	}
+	else
+	{
+		printf("\nBlad otwarcia pliku.\n");
+	}
+}
+
 void zapisDoPliku(double* tablicaSzum, int rozmiar)
 {
 	FILE* plik = fopen("export", "w");
@@ -211,9 +235,35 @@ void zapisDoPliku(double* tablicaSzum, int rozmiar)
 		printf("Błąd otwarcia pliku.\n");
 		return;
 	}
-
-	for (int i = 0; i < rozmiar; i++) {
-		fprintf(plik, "%.2lf\n", tablicaSzum[i]);
+	
+	int rozmiar = 1;
+	int n = 0;
+	*tablicaY = (double*)malloc(sizeof(double));
+	*tablicaX = (double*)malloc(sizeof(double));
+	double x, y;
+	//while (fscanf(plik, "%lf ; %lf", &x, &y) == 2) {
+	//	// Przetwarzanie danych
+	//	printf("%.6lf ; %.6lf\n", x, y);
+	//}
+	while (fgetc(plik) != EOF)
+	{
+		if (rozmiar <= n)
+		{
+			rozmiar = 2 * rozmiar;
+			*tablicaY = (double*)realloc(*tablicaY, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
+			*tablicaX = (double*)realloc(*tablicaX, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
+		}
+		//fscanf(plik, "%lf ; %lf \n", *tablicaX + n, *tablicaY + n);
+			if (fscanf(plik, "%lf ; %lf\n", &x, &y) == 2) {
+				// Przetwarzanie danych
+				(*tablicaX)[n] = x;
+				(*tablicaY)[n] = y;
+			}
+		//fscanf(plik, "%lf ; %lf", &x, &y);
+		//(*tablicaX )[n] = x;
+		//(*tablicaY)[n] = y;
+		printf("- Przyjeto wartosc X: %lf i  Y: %lf \n", (*tablicaX)[n], (*tablicaY)[n]);
+		n++;
 	}
 
 	fclose(plik);
