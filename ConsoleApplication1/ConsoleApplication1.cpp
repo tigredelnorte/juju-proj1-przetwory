@@ -174,7 +174,7 @@ void zapisDoPliku(double* tablicaWartosci, int rozmiar, double pierwszyArg, doub
 	}
 }
 
-void wczytanieZPliku(double** tablicaY, double** tablicaX)
+void wczytanieZPliku(double** tablicaY, double** tablicaX, int* rozmiarOdczytanychDanych)
 {
 
 	char nazwa[20];
@@ -202,10 +202,12 @@ void wczytanieZPliku(double** tablicaY, double** tablicaX)
 			*tablicaY = (double*)realloc(*tablicaY, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
 			*tablicaX = (double*)realloc(*tablicaX, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
 		}
+
 		fscanf(plik, "%lf ; %lf \n", *tablicaX + n, *tablicaY + n);
 		printf("- Przyjeto wartosc X: %.2lf i  Y: %.2lf \n", (*tablicaX)[n], (*tablicaY)[n]);
 		n++;
 	}
+	rozmiarOdczytanychDanych[0] = n;
 	printf("\nDane zosatly odczytane z pliku %s\n", buf);
 	printf("Przyjete odczyty: %d\n", n);
 	fclose(plik);
@@ -272,6 +274,7 @@ int main()
 	double* wspolczynniki = NULL;
 	double pierwszyArg, ostatniArg;
 	int rozmiar = NULL;
+	int rozmiarOdczytanychDanych = NULL;
 	double* tabWynik = NULL, * tabSzum = NULL, skokArg = NULL;
 	double* odczytTabWynikY = NULL, * odczytTabSzumY = NULL, * odczytTabWynikX = NULL, * odczytTabSzumX = NULL;
 	do
@@ -349,7 +352,7 @@ int main()
 			}
 			break;
 		case 6:
-			wczytanieZPliku(&odczytTabWynikY, &odczytTabWynikX);
+			wczytanieZPliku(&odczytTabWynikY, &odczytTabWynikX, &rozmiarOdczytanychDanych);
 			if (odczytTabWynikX != NULL)
 			{
 				gwiazdki[5] = star;
@@ -361,14 +364,14 @@ int main()
 			}
 			break;
 		case 7:
-			wczytanieZPliku(&odczytTabSzumY, &odczytTabSzumX);
+			wczytanieZPliku(&odczytTabSzumY, &odczytTabSzumX, &rozmiarOdczytanychDanych);
 			if (odczytTabSzumX != NULL)
 			{
 				gwiazdki[6] = star;
 			}
 			break;
 		case 8:
-			int typFiltracji, zrodloSygnalu, oknoFiltra;
+			int typFiltracji, zrodloSygnalu, oknoFiltra, rozmiarOdszum;
 			wyswietlMenuFiltracji(&typFiltracji, &zrodloSygnalu, &oknoFiltra);
 
 			double* wybranySygnalX, * wybranySygnalY, * odszumionySygnalY, * daneOryginalneY;
@@ -379,12 +382,13 @@ int main()
 
 			if (zrodloSygnalu == 1)
 			{
-				for (int i = 0; i < rozmiar; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
+				rozmiarOdszum = rozmiar;
+				for (int i = 0; i < rozmiarOdszum; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
 					daneOryginalneY[i] = tabSzum[i];
 					odszumionySygnalY[i] = tabSzum[i];
 				}
 
-				for (int i = 0; i < rozmiar; i++)
+				for (int i = 0; i < rozmiarOdszum; i++)
 				{
 					printf("TEST");
 					wybranySygnalX[i] = pierwszyArg + i * skokArg;
@@ -392,24 +396,33 @@ int main()
 			}
 			else if (zrodloSygnalu == 2)
 			{
-				wybranySygnalX = odczytTabSzumX;
-				wybranySygnalY = odczytTabSzumY;
+				rozmiarOdszum = rozmiarOdczytanychDanych;
+				for (int i = 0; i < rozmiarOdszum; i++) { //kopiowanie danych do nowego wsażnika bez połączenia ze danymi ze starego
+					daneOryginalneY[i] = odczytTabSzumY[i];
+					odszumionySygnalY[i] = odczytTabSzumY[i];
+					wybranySygnalX[i] = odczytTabSzumX[i];
+				}
 			}
 
 			if (typFiltracji == 1) //MEDIANA
 			{
-				//filtrujZSzumu_Mediana(wybranySygnalY, rozmiar, oknoFiltra, odszumionySygnalY);
+				//filtrujZSzumu_Mediana(wybranySygnalY, rozmiarOdszum, oknoFiltra, odszumionySygnalY);
 			}
 			else if (typFiltracji == 2) //SREDNIA
 			{
-				if (oknoFiltra > rozmiar) {
+				if (oknoFiltra > rozmiarOdszum) {
 					printf("Błędna szerokość okna.\n");
-				} else filtrujZSzumu_Srednia(daneOryginalneY, rozmiar, oknoFiltra, odszumionySygnalY);
+				}
+				else
+				{
+					filtrujZSzumu_Srednia(daneOryginalneY, rozmiarOdszum, oknoFiltra, odszumionySygnalY);
+					printf("Wartości przed (Y) i po (Y#) odszumieniu:\n");
+					for (int i = 0; i < rozmiarOdszum; i++) {
+						printf("X: %.2lf Y: %.2lf Y#: %.2lf\n", wybranySygnalX[i], daneOryginalneY[i], odszumionySygnalY[i]);
+					}
+				}
 			}
-			printf("Pobrane wartości:\n");
-			for (int i = 0; i < rozmiar; i++) {
-				printf("Wartość %lf: %.2lf , %.2lf, %.2lf\n", wybranySygnalX[i], daneOryginalneY[i], odszumionySygnalY[i], tabSzum[i]);
-			}
+
 			break;
 		case 9:
 			printf("Program zostanie zakończony.\n");
