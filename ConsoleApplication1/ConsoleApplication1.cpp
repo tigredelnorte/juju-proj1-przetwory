@@ -222,24 +222,38 @@ void wyswietlMenuFiltracji(int* typ, int* zrodlo, int* okno)
 	} while (!(*typ == 1 || *typ == 2));
 	do
 	{
-		printf("\nWybierz dane do odszumienia\n1. Wygenerowane wartosci zaszumionej funkcji (#2)\n2. Wczytane z pliku wartosci funkcji(#7)\n: ");
+		printf("\nWybierz dane do odszumienia\n1. Wygenerowane wartosci zaszumionej funkcji (#3)\n2. Wczytane z pliku wartosci zaszumionej funkcji(#7)\n: ");
 		scanf("%d", zrodlo);
 		if (!(*zrodlo == 1 || *zrodlo == 2)) printf("\nBLAD Sproboj ponownie\n");
 	} while (!(*zrodlo == 1 || *zrodlo == 2));
 	do
 	{
-		printf("\nPodaj zakres okna filtra odszumiania (liczba niepazysta): ");
+		printf("\nPodaj zakres okna filtra odszumiania (liczba niepazysta wieksza od 1): ");
 		scanf("%d", okno);
-		if (!(*okno > 0 && *okno % 2 == 1)) printf("\nBLAD Sproboj ponownie\n");
-	} while (!(*okno > 0 && *okno % 2 == 1));
+		if (!(*okno > 1 && *okno % 2 == 1)) printf("\nBLAD Sproboj ponownie\n");
+	} while (!(*okno > 1 && *okno % 2 == 1));
 }
-void filtrujZSzumuMediana(double* tablicaSzum, int okno) 
+
+void filtrujZSzumu_Mediana(double* tablicaSzumY, int rozmiar, int okno, double* odszumionySygnalY)
 {
 
 }
-void filtrujZSzumuSrednia(double* tablicaSzum, int okno)
-{
 
+void filtrujZSzumu_Srednia(double* tablicaSzumY, int rozmiar, int okno)
+{
+	printf("Pobrane wartości:\n");
+	for (int i = 0; i < rozmiar; i++) {
+		printf("Wartość %.2lf\n", *(tablicaSzumY + i));
+	}
+	int polowaOkna = okno / 2;
+
+	for (int i = polowaOkna; i < rozmiar - polowaOkna; i++) {
+		double suma = 0.0;
+		for (int j = i - polowaOkna; j <= i + polowaOkna; j++) {
+			suma += tablicaSzumY[j];
+		}
+		tablicaSzumY[i] = suma / okno;
+	}
 }
 
 int main()
@@ -270,7 +284,7 @@ int main()
 			tabWspolczynnikow(&wspolczynniki);
 			if (wspolczynniki != NULL) gwiazdki[0] = star;
 			printf("Tabela wyników:\n");
-			for (int i = 0; i <= 10; i++) {
+			for (int i = 0; i <= 6; i++) {
 				printf("Wartosc dla X: %d wynosi: %.2lf\n", i, wspolczynniki[i]);
 			}
 			break;
@@ -306,7 +320,7 @@ int main()
 				amplitudaiLosowanieSzumu(tabWynik, tabSzum, rozmiar);
 				printf("Pobrane wartosci:\n");
 				if (tabSzum != NULL) gwiazdki[2] = star;
-				for (int i = 0; i < rozmiar; i++)
+				for (int i = 0; i <= rozmiar; i++)
 				{
 					printf("Wartosc dla X: %.2lf wynosi: %.2lf\n", pierwszyArg + (i * skokArg), tabSzum[i]);
 				}
@@ -359,28 +373,46 @@ int main()
 			//printf("typFiltracji: %d\n", typFiltracji);
 			//printf("zrodloSygnalu: %d\n", zrodloSygnalu);
 			//printf("oknoFiltra: %d\n", oknoFiltra);
+			//rozmiar = 4;
+
+			double* wybranySygnalX, * wybranySygnalY, * odszumionySygnalY;
+			wybranySygnalX = (double*)malloc(rozmiar + 1 * sizeof(*wybranySygnalX));
+			wybranySygnalY = (double*)malloc(rozmiar + 1 * sizeof(*wybranySygnalY));
+			odszumionySygnalY = (double*)malloc(rozmiar + 1 * sizeof(*odszumionySygnalY));
+			if (zrodloSygnalu == 1)
+			{
+				//double tabSzumTest[4] = { 10,12,13,14 };
+				//wybranySygnalY = tabSzumTest;
+				wybranySygnalY = tabSzum;
+
+				//pierwszyArg = 1;
+				//skokArg = 2;
+				for (int i = 0; i < rozmiar; i++)
+				{
+					printf("TEST");
+					wybranySygnalX[i] = pierwszyArg + i * skokArg;
+				}
+			}
+			else if (zrodloSygnalu == 2)
+			{
+				wybranySygnalX = odczytTabSzumX;
+				wybranySygnalY = odczytTabSzumY;
+			}
 			if (typFiltracji == 1)
 			{
-				if (zrodloSygnalu == 1)
-				{;
-					filtrujZSzumuMediana(tabSzum, oknoFiltra);
-				}
-				if (zrodloSygnalu == 1)
-				{
-					filtrujZSzumuMediana(odczytTabSzumY, oknoFiltra);
-				}
+				//filtrujZSzumu_Mediana(wybranySygnalY, rozmiar, oknoFiltra, odszumionySygnalY);
 			}
-			if (typFiltracji == 2)
+			else if (typFiltracji == 2)
 			{
-				if (zrodloSygnalu == 1)
-				{
-					filtrujZSzumuSrednia(tabSzum, oknoFiltra);
-				}
-				if (zrodloSygnalu == 1)
-				{
-					filtrujZSzumuSrednia(odczytTabSzumY, oknoFiltra);
-				}
+				if (oknoFiltra > rozmiar) {
+					printf("Błędna szerokość okna.\n");
+				} else filtrujZSzumu_Srednia(wybranySygnalY, rozmiar, oknoFiltra);
 			}
+			printf("Pobrane wartości:\n");
+			for (int i = 0; i < rozmiar; i++) {
+				printf("Wartość %lf: %.2lf , %.2lf, %.2lf\n", wybranySygnalX[i], wybranySygnalY[i], odszumionySygnalY[i], tabSzum[i]);
+			}
+			break;
 		case 9:
 			printf("Program zostanie zakończony.\n");
 			break;
