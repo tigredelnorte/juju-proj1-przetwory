@@ -163,7 +163,7 @@ void zapisDoPliku(double* tablicaWartosci, int rozmiar, double pierwszyArg, doub
 	{
 		for (int i = 0; i < rozmiar; i++)
 		{
-			fprintf(plik, "%lf ; %lf\n", pierwszyArg + (i * skokArg), tablicaWartosci[i]);
+			fprintf(plik, " %lf ; %lf\n", pierwszyArg + (i * skokArg), tablicaWartosci[i]);
 		}
 		fclose(plik);
 		printf("\nDane zosatly zapisane do pliku %s\n", buf);
@@ -208,9 +208,14 @@ void wczytanieZPliku(double** tablicaY, double** tablicaX, int* rozmiarOdczytany
 			*tablicaX = (double*)realloc(*tablicaX, (rozmiar) * sizeof(double)); // Alokacja pamięci na tablicę
 		}
 		//fscanf(plik, "%lf ; %lf \n", *tablicaX + n, *tablicaY + n);
-		fscanf(plik, "%lf ; %lf", &x, &y);
-		(*tablicaX )[n] = x;
-		(*tablicaY)[n] = y;
+			if (fscanf(plik, "%lf ; %lf\n", &x, &y) == 2) {
+				// Przetwarzanie danych
+				(*tablicaX)[n] = x;
+				(*tablicaY)[n] = y;
+			}
+		//fscanf(plik, "%lf ; %lf", &x, &y);
+		//(*tablicaX )[n] = x;
+		//(*tablicaY)[n] = y;
 		printf("- Przyjeto wartosc X: %lf i  Y: %lf \n", (*tablicaX)[n], (*tablicaY)[n]);
 		n++;
 	}
