@@ -9,7 +9,7 @@
 
 void wyswietlMenu(char* gwiazdki)
 {
-	printf("\n*******************************************************\n");
+	printf("*******************************************************\n");
 	printf("*                 Generator funkcji                   *\n");
 	printf("* y = A*sin(B*x^2 + C*x) + D / (x - 1) * cos(E*x - F) *\n");
 	printf("*******************************************************\n");
@@ -26,10 +26,45 @@ void wyswietlMenu(char* gwiazdki)
 	printf("9. Wyjscie\n");
 	printf("Wybierz opcje (1-9): ");
 }
+
+double wczytajDoubleZPrzecinkiem() {
+	char input[100];
+	bool isNumeric = false;
+	double number = 0.0;
+
+	do {
+		//if (scanf(" %99[^\n]", input) != 1) {
+		//	printf("Bledne dane.\n");
+		//	while (getchar() != '\n'); // Wyczyszczenie bufora wejścia
+		//	continue;
+		//}
+		scanf(" %99[^\n]", input);
+		char* endptr;
+		number = strtod(input, &endptr);
+
+		// Sprawdzenie, czy dane nie zawierają znaków alfanumerycznych, tylko spacje lub przecinek
+		isNumeric = true;
+		for (int i = 0; input[i] != '\0'; i++) {
+			if (!isdigit(input[i]) && input[i] != ' ' && input[i] != ',') {
+				isNumeric = false;
+				break;
+			}
+		}
+
+		// Sprawdzenie, czy konwersja do double zakończyła się poprawnie i czy separator to przecinek
+		if (*endptr != '\0' || input[0] == ',' || !isNumeric) {
+			printf("Nieprawidlowe dane.\n");
+			printf("Podaj liczbe calkowita lub liczbe dziesietna z przecinkiem: ");
+			isNumeric = false;
+		}
+	} while (!isNumeric);
+
+	return number;
+}
+
 void tabWspolczynnikow(double** wspolczynniki)
 {
 	printf("Podaj w kolejnosci wartosci wspolczynnikow A, B, C, D, E, F:\n");
-	Sleep(1000);
 
 	*wspolczynniki = (double*)malloc(sizeof(double));
 	if (*wspolczynniki == NULL) {
@@ -53,9 +88,14 @@ void tabWspolczynnikow(double** wspolczynniki)
 			}
 		}
 		printf("Podaj wartosc dla %c: ", A + i);
-		scanf("%lf", *wspolczynniki + i); // Wczytywanie wartości do tablicy
+		(*wspolczynniki)[i] = wczytajDoubleZPrzecinkiem();
+		//while (scanf("%lf", *wspolczynniki + i) != 1)
+		//{
+		//	printf("\n!!! BLAD !!!\nWybierz opcje (1-9): ");
+		//	scanf("%*[^\n]");
+		//}
+		//scanf("%lf", *wspolczynniki + i); // Wczytywanie wartości do tablicy
 		printf("- Przyjeto wartosc %.2lf\n", (*wspolczynniki)[i]);
-		Sleep(500);
 	}
 }
 
@@ -82,10 +122,16 @@ void alokacjaPamieci(double** tabWynikowa, double** tablicaSzum, int* rozmiar)
 	printf("Podaj ilosc argumentow funkcji: ");
 	do
 	{
-		scanf("%d", rozmiar);
+		while (scanf("%d", rozmiar) != 1)
+		{
+			printf("\n!!! BLAD !!!\nPonownie podaj ilosc argumentow funkcji (liczba całkowita, dodatnia): ");
+			scanf("%*[^\n]");
+		}
 		if (*rozmiar <= 0)
-			printf("\n!!! BLAD !!!\nIlosc argumentow funkcji musi byc dodatnia!!!\n\nSproboj jeszcze raz podac ilosc argumentow funkcji: ");
-
+		{
+			printf("\n!!! BLAD !!!\nIlosc argumentow funkcji musi byc liczba dodatnia!!!\n\Podaj ilosc argumentow funkcji jeszcze raz: ");
+			scanf("%*[^\n]");
+		}
 	} while (*rozmiar <= 0);
 	*tabWynikowa = (double*)malloc(*rozmiar * sizeof(**tabWynikowa));
 	*tablicaSzum = (double*)malloc(*rozmiar * sizeof(**tablicaSzum));
@@ -202,7 +248,6 @@ void zapisDoPliku(double* tablicaWartosci, int rozmiar, double pierwszyArg, doub
 	{
 		printf("\nBlad otwarcia pliku.\n");
 	}
-	free(plik);
 }
 
 void wczytanieZPliku(double** tablicaY, double** tablicaX, int* rozmiarOdczytanychDanych)
@@ -358,7 +403,11 @@ int main()
 	do
 	{
 		wyswietlMenu(gwiazdki);
-		scanf("%d", &wyborMenu);
+		while (scanf("%d", &wyborMenu) != 1)
+		{
+			printf("\n!!! BLAD !!!\nWybierz opcje (1-9): ");
+			scanf("%*[^\n]");
+		}
 
 		switch (wyborMenu) {
 		case 1:
