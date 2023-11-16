@@ -5,10 +5,14 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.vcxproj", "{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication3", "ConsoleApplication3\ConsoleApplication3.vcxproj", "{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		proj3|x64 = proj3|x64
+		proj3|x86 = proj3|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
@@ -17,10 +21,26 @@ Global
 		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.Debug|x64.Build.0 = Debug|x64
 		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.Debug|x86.ActiveCfg = Debug|Win32
 		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.Debug|x86.Build.0 = Debug|Win32
+		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.proj3|x64.ActiveCfg = proj3|x64
+		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.proj3|x64.Build.0 = proj3|x64
+		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.proj3|x86.ActiveCfg = proj3|Win32
+		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.proj3|x86.Build.0 = proj3|Win32
 		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.Release|x64.ActiveCfg = Release|x64
 		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.Release|x64.Build.0 = Release|x64
 		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.Release|x86.ActiveCfg = Release|Win32
 		{094C3D1F-B8D0-4B62-BDD7-C7E030434A71}.Release|x86.Build.0 = Release|Win32
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.Debug|x64.ActiveCfg = Debug|x64
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.Debug|x64.Build.0 = Debug|x64
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.Debug|x86.ActiveCfg = Debug|Win32
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.Debug|x86.Build.0 = Debug|Win32
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.proj3|x64.ActiveCfg = proj3|x64
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.proj3|x64.Build.0 = proj3|x64
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.proj3|x86.ActiveCfg = proj3|Win32
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.proj3|x86.Build.0 = proj3|Win32
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.Release|x64.ActiveCfg = Release|x64
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.Release|x64.Build.0 = Release|x64
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.Release|x86.ActiveCfg = Release|Win32
+		{7AEC4715-EE93-4732-B4CE-96DF5B98EDC7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
